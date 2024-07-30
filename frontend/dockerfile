@@ -1,27 +1,23 @@
-# Use an official Dart runtime as the base image
-FROM dart:3.4.4 AS build
+# Use the official Flutter image as a parent image
+FROM cirrusci/flutter:stable as build
 
 # Set the working directory in the container
 WORKDIR /app
 
-# Copy the pubspec files to the container
-COPY pubspec.* ./
-
-# Get app dependencies
-RUN dart pub get
-
-# Copy the rest of the application code
+# Copy the entire project to the container
 COPY . .
 
+# Get Flutter packages
+RUN flutter pub get
+
 # Build the app for the web
-RUN dart pub global activate webdev
-RUN dart pub global run webdev build
+RUN flutter build web
 
 # Use Nginx to serve the built app
 FROM nginx:alpine
 
 # Copy the built app to Nginx's serve directory
-COPY --from=build /app/build /usr/share/nginx/html
+COPY --from=build /app/build/web /usr/share/nginx/html
 
 # Expose port 80
 EXPOSE 80
