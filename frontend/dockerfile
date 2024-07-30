@@ -1,0 +1,30 @@
+# Use an official Dart runtime as the base image
+FROM google/dart:2.19 AS build
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy the pubspec files to the container
+COPY pubspec.* ./
+
+# Get app dependencies
+RUN dart pub get
+
+# Copy the rest of the application code
+COPY . .
+
+# Build the app for the web
+RUN dart pub global activate webdev
+RUN dart pub global run webdev build
+
+# Use Nginx to serve the built app
+FROM nginx:alpine
+
+# Copy the built app to Nginx's serve directory
+COPY --from=build /app/build /usr/share/nginx/html
+
+# Expose port 80
+EXPOSE 80
+
+# Start Nginx
+CMD ["nginx", "-g", "daemon off;"]
