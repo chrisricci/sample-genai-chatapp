@@ -1,5 +1,5 @@
 # Use an official Dart runtime as the base image
-FROM dart:2.19 AS build
+FROM dart:3.44 AS build
 
 # Set the working directory in the container
 WORKDIR /app
