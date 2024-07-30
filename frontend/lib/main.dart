@@ -1,8 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'dart:math';
+import 'package:google_cloud/google_cloud.dart';
+import 'package:googleapis_auth/auth_io.dart';
+import 'package:googleapis/aiplatform/v1.dart';
 
-void main() => runApp(MyApp());
+
+
+String generateSessionId() {
+  // Implementation for generating a random session ID
+  // This is a simple example, you might want to use a more robust approach
+  final random = Random();
+  final characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
+  final sessionId = String.fromCharCodes(Iterable.generate(
+      10, (_) => characters.codeUnitAt(random.nextInt(characters.length))));
+  return sessionId;
+}
+
+// Call the function to generate a session ID
+String sessionId = generateSessionId();
+
+// Now you can use the 'sessionId' variable in your application
+void main() async {
+  runApp(MyApp());
+  }
 
 class MyApp extends StatelessWidget {
   @override
@@ -41,13 +63,26 @@ class _ChatScreenState extends State<ChatScreen> {
 
   void _getBotResponse(String userMessage) async {
     // This is where we make the call to our Python backend
-    final response = await http.post(
-      Uri.parse('http://localhost:5000/chat'),  // Replace with your server's address
+    final projectId = await computeProjectId();
+    print('Current GCP project id: $projectId');
+    final authClient = await clientViaApplicationDefaultCredentials(
+      scopes: [AiplatformApi.cloudPlatformScope],
+    );
+    final response = await authClient.post(
+      Uri.parse('POST https://us-central1-dialogflow.googleapis.com/v3/projects/cr-genai-demo/locations/us-central1/agents/bdcc42ba-8d04-4e5e-a736-4da87aea2ab1/sessions/$sessionId/message:detectIntent'),  // Replace with your server's address
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: jsonEncode(<String, String>{
-        'message': userMessage,
+      body: jsonEncode({
+        'queryInput': {
+          'text':{
+            'text': userMessage,
+          },
+          'languageCode': 'en',
+          },
+          'queryParams':{
+            'timeZone': "America/New_York"
+          }
       }),
     );
 
@@ -70,7 +105,7 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("ChatGPT-like Interface")),
+      appBar: AppBar(title: Text("Vertex AI Agent Builder App")),
       body: Column(
         children: [
           Flexible(
