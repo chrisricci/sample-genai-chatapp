@@ -19,7 +19,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.4.4 <4.0.0'
+  sdk: 3.4.4
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -35,11 +35,23 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.6
-  http: any
+  #http: any
   shared_preferences: any
+  #google_cloud: 0.2.0
+  #googleapis: 12.0.0
+  #googleapis_auth: 1.4.1
+  extension_google_sign_in_as_googleapis_auth: 2.0.12
+    # When depending on this package from a real application you should use:
+    #   extension_google_sign_in_as_googleapis_auth: ^x.y.z
+    # See https://dart.dev/tools/pub/dependencies#version-constraints
+    # The example app is bundled with the plugin so we use a path dependency on
+    # the parent directory to use the current plugin's version.
+  google_sign_in: ">=5.0.0 <7.0.0"
+  googleapis: 13.1.0
+  googleapis_auth: 1.5.1
   google_cloud: ^0.2.0
-  googleapis: ^12.0.0
-  googleapis_auth: ^1.4.1
+  google_sign_in_platform_interface: ^2.4.5
+  google_sign_in_web: ^0.12.4
 
 dev_dependencies:
   flutter_test:
@@ -50,7 +62,7 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^3.0.0
+  flutter_lints: ^4.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
